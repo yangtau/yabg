@@ -6,7 +6,7 @@ import os
 
 pages_dir = "pages/"
 templates_dir = "templates/"
-output_dir = "./"
+output_dir = "../"
 markdown_extension = ".md"
 template_extension = ".j2"
 
