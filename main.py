@@ -65,10 +65,12 @@ def list_files(dir_path) -> [str]:
 
 
 def copy_to_output(file, file_name):
+    print('Copy file %s\t' % file_name)
     dir_path, _ = os.path.split(file_name)
     os.makedirs(dir_path, exist_ok=True)
     with open(file_name, "wb") as f:
         f.write(file.read())
+    print('done')
 
 
 def get_html_url(file_path: str) -> str:
@@ -159,6 +161,7 @@ def get_global_metadata() -> dict:
 
 def generate():
     rel_pages_dir = os.path.relpath(pages_dir)
+    rel_tpl_dir = os.path.relpath(templates_dir)
     files = list_files(pages_dir)
     global_metadata = get_global_metadata()
     pages = []
@@ -168,21 +171,17 @@ def generate():
         else:
             # copy to output dir directly
             out_file_path = os.path.join(
-                output_dir, '/'.join(f.split('/')[1:]))
+                output_dir, f.replace(rel_pages_dir+'/', ''))
             with open(f, "rb") as file:
                 copy_to_output(file, out_file_path)
     template_files = list_files(templates_dir)
     for f in template_files:
         if not f.endswith(template_extension):
             out_file_path = os.path.join(
-                output_dir, '/'.join(f.split('/')[1:]))
+                output_dir, f.replace(rel_tpl_dir+'/', ''))
             with open(f, "rb") as file:
                 copy_to_output(file, out_file_path)
-    # print(global_metadata)
-    # for k, v in global_metadata.items():
-    #     print(k)
-    #     print(v)
-    # print(global_metadata)
+
     for page in pages:
         render_res = render_jinja(page, global_metadata)
         with open(os.path.join(output_dir, page[metadata_url]), "w") as f:
