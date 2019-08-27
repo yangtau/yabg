@@ -5,7 +5,7 @@ import markdown
 import os
 
 pages_dir = "pages/"
-templates_dir = "templates/"
+templates_dir = "gen/templates/"
 output_dir = "../"
 markdown_extension = ".md"
 template_extension = ".j2"
@@ -21,7 +21,7 @@ metadata_template = 'template'  # default: post
 metadata_template_deafult = 'post'
 metadata_render = 'render'  # default: true
 metadata_hide = 'hide'  # default: false
-# for inner use
+
 metadata_url = 'url'
 metadata_content = 'content'
 metadata_date = 'date'
@@ -110,9 +110,9 @@ def render_markdown(file_path, global_metadata):
         metadata.setdefault(metadata_hide, False)
         metadata.setdefault(metadata_render, True)
         metadata.setdefault(metadata_template, metadata_template_deafult)
-        if metadata[metadata_hide]:
-            print('hide is setted to be True')
-            return
+        # if metadata[metadata_hide]:
+        #     print('hide is setted to be True')
+        #     return
         metadata[metadata_url] = get_html_url(file_path)
         # add to global metadata before render content
         if metadata[metadata_template] == metadata_template_deafult:
