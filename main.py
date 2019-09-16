@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 from jinja2 import FileSystemLoader, Template, Environment, select_autoescape
 import yaml
 import markdown
@@ -20,15 +20,17 @@ metadata_title = 'title'  # compulsive
 metadata_template = 'template'  # default: post
 metadata_template_deafult = 'post'
 metadata_render = 'render'  # default: true
-metadata_hide = 'hide'  # default: false
+# metadata_hide = 'hide'  # default: false
 
 metadata_url = 'url'
 metadata_content = 'content'
 metadata_date = 'date'
 
-build_int_metadata = (metadata_content, metadata_url,
-                      metadata_hide, metadata_render,
-                      metadata_template, metadata_title,
+build_int_metadata = (metadata_content,
+                      metadata_url,
+                      metadata_render,
+                      metadata_template,
+                      metadata_title,
                       metadata_date
                       )
 
@@ -108,13 +110,10 @@ def render_markdown(file_path, global_metadata):
                             metadata_content)
         if metadata_title not in metadata:
             print("Warning: `%s` is strongly suggested!" % metadata_title)
-        # default for some metadata: hide, render, template
-        metadata.setdefault(metadata_hide, False)
+        # default for some metadatas: render, template
         metadata.setdefault(metadata_render, True)
         metadata.setdefault(metadata_template, metadata_template_deafult)
-        # if metadata[metadata_hide]:
-        #     print('hide is setted to be True')
-        #     return
+        # url
         metadata[metadata_url] = get_html_url(file_path)
         # add to global metadata before render content
         if metadata[metadata_template] == metadata_template_deafult:
@@ -134,17 +133,14 @@ def render_markdown(file_path, global_metadata):
                     else:
                         global_metadata[key].setdefault(value, [])
                         global_metadata[key][value].append(copy)
-
         # render `html` content
         content = ''.join(lines[second+1:])
         if metadata[metadata_render]:
-            extras = ['markdown.extensions.toc'] if metadata[metadata_template] \
-                == metadata_template_deafult else []
-            extras += ['markdown.extensions.extra', ]
-            html = markdown.markdown(content,
-                                     extensions=extras)
+            extras = ['markdown.extensions.extra']
+            if metadata[metadata_template] == metadata_template_deafult:
+                extras.append('markdown.extensions.toc')
+            html = markdown.markdown(content, extensions=extras)
             metadata[metadata_content] = html
-
         else:
             metadata[metadata_content] = content
     print('done')
