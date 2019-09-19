@@ -13,9 +13,7 @@ template_extension = ".j2"
 global_metadata_user_value = 'τ'
 global_metadata_domain_value = 'https://yangtau.me'
 global_metadata_copy_right_year_value = '2019'
-global_metadata_posts = 'posts'
-
-# metadata of pages:
+global_metadata_posts = 'posts' # metadata of pages:
 metadata_title = 'title'  # compulsive
 metadata_template = 'template'  # default: post
 metadata_template_deafult = 'post'
@@ -136,10 +134,13 @@ def render_markdown(file_path, global_metadata):
         # render `html` content
         content = ''.join(lines[second+1:])
         if metadata[metadata_render]:
-            extras = ['markdown.extensions.extra']
-            if metadata[metadata_template] == metadata_template_deafult:
-                extras.append('markdown.extensions.toc')
-            html = markdown.markdown(content, extensions=extras)
+            exts = ['markdown.extensions.extra',
+                    'pymdownx.keys',
+                    'pymdownx.mark',
+                    'pymdownx.tilde',
+                    'markdown.extensions.toc',
+                    ]
+            html = markdown.markdown(content, extensions=exts)
             metadata[metadata_content] = html
         else:
             metadata[metadata_content] = content
