@@ -181,10 +181,13 @@ def generate():
 
     for page in pages:
         render_res = render_jinja(page, global_metadata)
-        with open(os.path.join(output_dir, page[metadata_url]), "w") as f:
-            print("writing %s ...\t" % page[metadata_url])
+        file_name = os.path.join(output_dir, page[metadata_url])
+        dir_path, _ = os.path.split(file_name)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file_name, "w") as f:
+            print("Writing %s ...\t" % page[metadata_url])
             f.write(render_res)
-            print('done')
+            print('Done')
 
 
 if __name__ == "__main__":
