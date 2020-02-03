@@ -4,12 +4,10 @@
 {{ super() }}
     
 <h2>文章</h2>
-
+## __posts post.hide post.date post.title post.__url 
 <ul>
-{% for post in posts|sort(attribute='date', reverse=True) %}
-    {% if not post.hide %}
-    <li>{{ post.date }} <a href={{ post.url }}> {{ post.title }}</a></li>
-    {% endif %}
+{% for post in __posts|rejectattr('hide')|sort(attribute='date', reverse=True) %}
+<li>{{ post.date }} <a href={{ post.__url }}> {{ post.title }}</a></li>
 {% endfor %}
 </ul>
 

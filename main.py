@@ -1,58 +1,62 @@
 #!/usr/bin/env python3
-from jinja2 import FileSystemLoader, Template, Environment, select_autoescape
+from jinja2 import FileSystemLoader, Environment
 import yaml
 import markdown
 import os
+import sys
+import datetime
 
-pages_dir = "pages/"
-templates_dir = "gen/templates/"
-output_dir = "../"
-markdown_extension = ".md"
-template_extension = ".j2"
+'''metadata'''
+METADATA_TITLE = 'title'  # compulsive
+METADATA_TEMPLATE = 'template'  # default: post
+METADATA_TEMPLATE_DEAFULT = 'post'  # post.j2
+METADATA_RENDER = 'render'  # default: true
+METADATA_DATE = 'date'
+'''invisable metadata'''
+METADATA_URL = '__url'
+METADATA_CONTENT = '__content'
+METADATA_POSTS = '__posts'  # used for global access
 
-global_metadata_user_value = 'τ'
-global_metadata_domain_value = 'https://yangtau.me'
-global_metadata_copy_right_year_value = '2019'
-global_metadata_posts = 'posts'  # metadata of pages:
-metadata_title = 'title'  # compulsive
-metadata_template = 'template'  # default: post
-metadata_template_deafult = 'post'
-metadata_render = 'render'  # default: true
-# metadata_hide = 'hide'  # default: false
+'''markdown extensions'''
+MARKDOWN_EXTS = ['markdown.extensions.extra',
+                 'pymdownx.keys',
+                 'pymdownx.mark',
+                 'pymdownx.tilde',
+                 'markdown.extensions.toc',
+                 ]
 
-metadata_url = 'url'
-metadata_content = 'content'
-metadata_date = 'date'
+'''config'''
+TEMPLATE_DIR = 'template_dir'
+PAGE_DIR = 'page_dir'
+OUTPUT_DIR = 'output_dir'
+STYLE_DIR = 'style_dir'
 
-build_int_metadata = (metadata_content,
-                      metadata_url,
-                      metadata_render,
-                      metadata_template,
-                      metadata_title,
-                      metadata_date
-                      )
-
-
-env = Environment(loader=FileSystemLoader(templates_dir),
-                  autoescape=select_autoescape(['css']))
-
-
-def get_template(template_name) -> Template:
-    return env.get_template(template_name+template_extension)
+'''
+Jinja
+'''
 
 
-def render_jinja(metadata, global_metadata):
-    tpl = get_template(metadata[metadata_template])
-    data = global_metadata.copy()
-    # override the same key in global data using page metadata
-    data.update(metadata)
-    return tpl.render(data)
+def get_jinja2_env(templates_dir):
+    return Environment(loader=FileSystemLoader(templates_dir))
+
+
+def render_jinja(metadata, env):
+    tpl = env.get_template(metadata[METADATA_TEMPLATE]+'.j2')
+    return tpl.render(metadata)
+
+
+def render_index(metadata, env, pages: list):
+    tpl = env.get_template(metadata[METADATA_TEMPLATE]+'.j2')
+    return tpl.render(metadata)
+
+
+'''
+file
+'''
 
 
 def list_files(dir_path) -> [str]:
-    '''
-    list relative paths all files in `dir_path` recursively
-    '''
+    '''list relative paths all files in `dir_path` recursively'''
     xs = os.listdir(dir_path)
     res = []
     for f in xs:
@@ -65,131 +69,123 @@ def list_files(dir_path) -> [str]:
 
 
 def copy_to_output(file, file_name):
-    print('Copy file %s\t' % file_name)
     dir_path, _ = os.path.split(file_name)
     os.makedirs(dir_path, exist_ok=True)
     with open(file_name, "wb") as f:
         f.write(file.read())
-    print('done')
 
 
-def get_html_url(file_path: str) -> str:
-    '''
-    change file path to html url
-    eg, pages/hello.md -> hello.html
-    '''
-    path_rm_page_dir = '/'.join(file_path.split('/')[1:])
-    return '.'.join(path_rm_page_dir.split('.')[:-1]) + '.html'
+'''
+markdown
+'''
 
 
-def render_markdown(file_path, global_metadata):
-    print('processing %s...' % file_path, end='\t')
-    with open(file_path, "r") as f:
-        lines = f.readlines()
-        # find yaml filed
-        first, second = -1, -1
-        for k in range(len(lines)):
-            if lines[k] == '---\n':
-                if first == -1:
-                    first = k
-                else:
-                    second = k
-                    break
-        else:
-            raise Exception('No metadata found in markdown file.')
-        metadata = dict(
-            yaml.load(''.join(lines[first+1:second]), Loader=yaml.SafeLoader))
-        # check metadata
-        # url, content is not allowed for user to set
-        # title is suggested
-        if metadata_url in metadata:
-            raise Exception('%s should not be setted by user' % metadata_url)
-        if metadata_content in metadata:
-            raise Exception('%s should not be setted by user' %
-                            metadata_content)
-        if metadata_title not in metadata:
-            print("Warning: `%s` is strongly suggested!" % metadata_title)
-        # default for some metadatas: render, template
-        metadata.setdefault(metadata_render, True)
-        metadata.setdefault(metadata_template, metadata_template_deafult)
-        # url
-        metadata[metadata_url] = get_html_url(file_path)
-        # add to global metadata before render content
-        if metadata[metadata_template] == metadata_template_deafult:
-            copy = metadata.copy()
-            global_metadata[global_metadata_posts].append(copy)
-            '''
-            for example, a post has metadata: {'tag':['code', 'system']}
-            then global metadate will be {...'tag':{'code':[], 'system':[]}...}
-            '''
-            for key, value in copy.items():
-                if key not in build_int_metadata:
-                    global_metadata.setdefault(key, {})
-                    if isinstance(value, list):
-                        for v in value:
-                            global_metadata[key].setdefault(value, [])
-                            global_metadata[key][value].append(copy)
-                    else:
-                        global_metadata[key].setdefault(value, [])
-                        global_metadata[key][value].append(copy)
-        # render `html` content
-        content = ''.join(lines[second+1:])
-        if metadata[metadata_render]:
-            exts = ['markdown.extensions.extra',
-                    'pymdownx.keys',
-                    'pymdownx.mark',
-                    'pymdownx.tilde',
-                    'markdown.extensions.toc',
-                    ]
-            html = markdown.markdown(content, extensions=exts)
-            metadata[metadata_content] = html
-        else:
-            metadata[metadata_content] = content
-    print('done')
+def split_markdown(lines: [str]) -> ([str], [str]):
+    '''return the lines of metadata and the lines of markdown content'''
+    first, second = -1, -1
+    for k in range(len(lines)):
+        if lines[k] == '---\n':
+            if first == -1:
+                first = k
+            else:
+                second = k
+                break
+    else:
+        raise Exception('No metadata found in markdown file.')
+    return (lines[first+1:second], lines[second+1:])
+
+
+def get_page_metadata(lines: [str]) -> dict:
+    metadata = dict(yaml.load(''.join(lines), Loader=yaml.SafeLoader))
+    # check metadata
+    # url, content is not allowed for user to set
+    if METADATA_URL in metadata:
+        raise Exception('%s should not be setted by user' % METADATA_URL)
+    if METADATA_CONTENT in metadata:
+        raise Exception('%s should not be setted by user' % METADATA_CONTENT)
+    # title is suggested
+    if METADATA_TITLE not in metadata:
+        print("Warning: `%s` is strongly suggested!" % METADATA_TITLE)
+    # default for some metadatas: render, template
+    metadata.setdefault(METADATA_RENDER, True)
+    metadata.setdefault(METADATA_TEMPLATE, METADATA_TEMPLATE_DEAFULT)
+    metadata.setdefault(
+        METADATA_DATE, datetime.date.today().strftime('%Y-%m-%d'))
     return metadata
 
 
-def get_global_metadata() -> dict:
-    return {global_metadata_posts: [],
-            'user': global_metadata_user_value,
-            'year': global_metadata_copy_right_year_value,
-            'domain': global_metadata_domain_value
-            }
+def render_markdown(file_path) -> dict:
+    print('markdown: processing %s...' % file_path)
+    with open(file_path, "r") as f:
+        lines = f.readlines()
+    metadatalines, content_lines = split_markdown(lines)
+    content = ''.join(content_lines)
+    metadata = get_page_metadata(metadatalines)
+    if metadata[METADATA_RENDER]:
+        html = markdown.markdown(content, extensions=MARKDOWN_EXTS)
+        metadata[METADATA_CONTENT] = html
+    else:
+        metadata[METADATA_CONTENT] = content
+    return metadata
 
 
-def generate():
-    rel_pages_dir = os.path.relpath(pages_dir)
-    rel_tpl_dir = os.path.relpath(templates_dir)
+def load_config(config_file: str):
+    with open(config_file) as f:
+        lines = f.readlines()
+    return dict(yaml.load(''.join(lines), Loader=yaml.SafeLoader))
+
+
+def generate(config_file: str):
+    config = load_config(config_file)
+    # change to the dir containing the config_file, because all paths in config
+    # are relative paths with respect to config_file.
+    os.chdir(os.path.dirname(config_file))
+
+    pages_dir = os.path.relpath(config[PAGE_DIR])
+    output_dir = os.path.relpath(config[OUTPUT_DIR])
     files = list_files(pages_dir)
-    global_metadata = get_global_metadata()
     pages = []
     for f in files:
-        if f.endswith(markdown_extension):
-            pages.append(render_markdown(f, global_metadata))
+        if f.endswith('.md'):
+            md = render_markdown(f)
+            url = f.replace(pages_dir+'/', '')
+            md[METADATA_URL] = url[:-2]+'html'
+            md[METADATA_POSTS] = pages
+            pages.append(md)
+            # print(md)
         else:
             # copy to output dir directly
-            out_file_path = os.path.join(
-                output_dir, f.replace(rel_pages_dir+'/', ''))
+            out_file = os.path.join(output_dir, f.replace(pages_dir+'/', ''))
+            print('copying %s to %s...' % (f, out_file))
             with open(f, "rb") as file:
-                copy_to_output(file, out_file_path)
-    template_files = list_files(templates_dir)
-    for f in template_files:
-        if not f.endswith(template_extension):
-            out_file_path = os.path.join(
-                output_dir, f.replace(rel_tpl_dir+'/', ''))
-            with open(f, "rb") as file:
-                copy_to_output(file, out_file_path)
-
+                copy_to_output(file, out_file)
+    # render pages with j2
+    j2_env = get_jinja2_env(config[TEMPLATE_DIR])
     for page in pages:
-        render_res = render_jinja(page, global_metadata)
-        file_name = os.path.join(output_dir, page[metadata_url])
-        dir_path, _ = os.path.split(file_name)
-        os.makedirs(dir_path, exist_ok=True)
+        print('jinja2: rendering %s...' % page[METADATA_URL])
+        render_res = render_jinja(page, j2_env)
+        file_name = os.path.join(output_dir, page[METADATA_URL])
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
         with open(file_name, "w") as f:
-            print("Writing %s ...\t" % page[metadata_url])
             f.write(render_res)
-            print('Done')
+    # copy style files
+    style_dir = os.path.relpath(config[STYLE_DIR])
+    files = list_files(style_dir)
+    for filename in files:
+        out = os.path.join(output_dir, filename.replace(style_dir+'/', ''))
+        print('copying %s to %s...' % (filename, out))
+        with open(filename, 'rb') as f:
+            copy_to_output(f, out)
 
 
 if __name__ == "__main__":
-    generate()
+    if len(sys.argv) >= 2:
+        config_file = sys.argv[1]
+    else:
+        config_file = './config.yaml'
+    if not os.path.exists(config_file):
+        print('No config file was found in current dir and no filename of config are indicate.')
+        print('Usage: %s [config_file]' % sys.argv[0])
+        print('Or you should include a file named `config.yaml` in current dir')
+        exit()
+    generate(config_file)

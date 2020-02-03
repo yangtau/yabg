@@ -14,25 +14,15 @@
 
 <body>
 {% block body %}
-
-    <div class="content">
-    {% block content %}
-    {{content}}
-    {% endblock %}
-    </div>
-
-    <!-- 
-    <div class="footer">
-    {% block footer %}
-    &copy; Copyright {{ copy_right_year }} by <a href={{ domain }}>{{ user }}</a>.
-    {% endblock %}
-    </div>
-    -->
+<div class="content">
+{% block content %}
+{{__content}}
+{% endblock %}
+</div>
 {% endblock %}
 </body>
 
 {% block script%}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/highlight.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 <script>hljs.initHighlightingOnLoad();</script>
@@ -48,6 +38,5 @@
       "HTML-CSS": { availableFonts: ["TeX"] }
     });
 </script>
-
 {% endblock%}
 </html>
