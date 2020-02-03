@@ -97,7 +97,8 @@ def render_markdown(file_path, global_metadata):
                     break
         else:
             raise Exception('No metadata found in markdown file.')
-        metadata = dict(yaml.load(''.join(lines[first+1:second])))
+        metadata = dict(
+            yaml.load(''.join(lines[first+1:second]), Loader=yaml.SafeLoader))
         # check metadata
         # url, content is not allowed for user to set
         # title is suggested
