@@ -135,6 +135,13 @@ def load_config(config_file: str):
     return dict(yaml.load(''.join(lines), Loader=yaml.SafeLoader))
 
 
+def gen_site_map(config, urls):
+    filename = os.path.join(config[OUTPUT_DIR], config['sitemap'])
+    urls = [os.path.join(config['domain'], u)+'\n' for u in urls]
+    with open(filename, "w") as f:
+        f.writelines(urls)
+
+
 def generate(config_file: str):
     config = load_config(config_file)
     # change to the dir containing the config_file, because all paths in config
@@ -168,6 +175,8 @@ def generate(config_file: str):
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         with open(file_name, "w") as f:
             f.write(render_res)
+    # generate sitemap
+    gen_site_map(config, [md[METADATA_URL] for md in pages])
     # copy style files
     style_dir = os.path.relpath(config[STYLE_DIR])
     files = list_files(style_dir)

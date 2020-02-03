@@ -4,6 +4,8 @@ page_dir: ../pages
 output_dir: ../output
 style_dir: ./style
 
+sitemap: sitemap.txt
+
 user_name: τ
-domin: yangtau.me
+domain: https://yangtau.me
  
