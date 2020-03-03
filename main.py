@@ -146,7 +146,9 @@ def generate(config_file: str):
     config = load_config(config_file)
     # change to the dir containing the config_file, because all paths in config
     # are relative paths with respect to config_file.
-    os.chdir(os.path.dirname(config_file))
+    config_dir = os.path.dirname(config_file)
+    if config_dir != '':
+        os.chdir(config_dir)
 
     pages_dir = os.path.relpath(config[PAGE_DIR])
     output_dir = os.path.relpath(config[OUTPUT_DIR])
