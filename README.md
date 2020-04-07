@@ -1,6 +1,6 @@
-# Static HTML Generator
+# Yet Another Blog Generator
 
-This is a simple HTML generator built with [Jinja2](https://github.com/pallets/jinja) and [Python-Markdown](https://github.com/Python-Markdown/markdown).
+*yabg* is a simple static blog generator built with [Jinja2](https://github.com/pallets/jinja) and [Python-Markdown](https://github.com/Python-Markdown/markdown).
 I use it to power my blog. Most blog generators, like hexo, are too complex.
 I just want a simple one without too many useless functions, so I build this one.
 
@@ -11,6 +11,9 @@ pip install Jinja2
 pip install markdown
 pip install pymdown-extensions
 ```
+## Examples
+
+[](https://yangtau.me)
 
 ---
 
