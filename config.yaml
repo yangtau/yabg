@@ -1,8 +1,8 @@
-# dir path should be the relative path of this file
-template_dir: ./templates
+# dir path should be the relative path of this config file
+template_dir: templates
 page_dir: ../pages
 output_dir: ../public
-style_dir: ./style
+style_dir: style
 
 sitemap: sitemap.txt
 
