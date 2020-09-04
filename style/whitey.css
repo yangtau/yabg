@@ -1,23 +1,21 @@
 html, body {
 	margin: auto;
 	background: #fefefe;
-	font-size: 19px;
 }
 
 body {
-	font-family: Georgia, "Times New Roman", Vollkorn, Palatino, Times, 
-                 "WenQuanYi Zen Hei Mono",
-                 "Source Han Mono SC",
-				 "微软雅黑",  "Microsoft YaHei",
- 			     STXihei, "华文细黑", 
-				 "Noto Sans CJK SC", 
-				 serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+                "PingFang SC", "Microsoft YaHei", 
+                "WenQuanYi Zen Hei","WenQuanYi Micro Hei",
+                "Source Han Sans SC", "Source Han Sans CN", 
+                "Noto Sans CJK SC",  sans-serif;
 	color: #222222;
 	line-height: 1.7;
 	text-align: left;
 	max-width: 800px;
 	margin: 2em auto;
 	padding: 1em;
+	font-size: 18px;
 }
 
 h1 {
@@ -55,7 +53,6 @@ h2:after {
 }
 
 ul {
-	list-style: square;
 	padding-left: 1.2em;
 }
 
@@ -104,7 +101,7 @@ blockquote cite::before {
 
 code, pre {
 	font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", 
-                 "Menlo", "Monaco", monospace, serif;
+                 "Menlo", "Monaco", monospace;
 	font-size: .9em;
 }
 
@@ -172,3 +169,15 @@ table caption+thead tr:first-child th, table caption+thead tr:first-child td, ta
 table tbody+tbody {
 	border-top: 2px solid #ddd
 }
+
+
+/* task list */
+.task-list-item {
+list-style-type: none !important;
+}
+.task-list-item input[type="checkbox"] {
+margin: 0 4px 0.25em -20px;
+vertical-align: middle;
+}
+
+
