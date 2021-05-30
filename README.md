@@ -25,7 +25,7 @@ pip install PyYAML
 python3 yabg/main.py config.yaml
 ```
 
-## [https://now.sh](now.sh) Deployment
+## [now.sh](https://now.sh) Deployment
 
 ```
 FRAMEWORK PRESET: other
