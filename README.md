@@ -33,6 +33,12 @@ BUILD COMMAND: pip install PyYAML Jinja2 markdown pymdown-extensions && python3 
 OUTPUT DICTORY: public # setted in your config.yaml
 ```
 
+Add `rm -rf public/` if you need to clear the old one before building the new one (if your `output_dir` in config.yaml is `public/`):
+```
+BUILD COMMAND: pip install PyYAML Jinja2 markdown pymdown-extensions && rm -rf public/ && python3 yabg/main.py
+```
+
+
 # Dart-Generator
 
 I first built this generator using Dart and Mustache, but the markdown library of Dart just supports the basic markdown syntax and Mustache is not powerful enough.
