@@ -108,11 +108,10 @@ def get_page_metadata(lines: [str]) -> dict:
     # title is suggested
     if METADATA_TITLE not in metadata:
         print("Warning: `%s` is strongly suggested!" % METADATA_TITLE)
-    # default for some metadatas: render, template
+    # default for some metadata: render, template
     metadata.setdefault(METADATA_RENDER, True)
     metadata.setdefault(METADATA_TEMPLATE, METADATA_TEMPLATE_DEAFULT)
-    metadata.setdefault(
-        METADATA_DATE, datetime.date.today().strftime('%Y-%m-%d'))
+    metadata.setdefault(METADATA_DATE, datetime.date.today())
     return metadata
 
 
@@ -163,13 +162,12 @@ def generate(config_file: str):
             md[METADATA_URL] = url[:-2]+'html'
             md[METADATA_POSTS] = pages
             pages.append(md)
-            # print(md)
-        else:
-            # copy to output dir directly
-            out_file = os.path.join(output_dir, f.replace(pages_dir+'/', ''))
-            print('copying %s to %s...' % (f, out_file))
-            with open(f, "rb") as file:
-                copy_to_output(file, out_file)
+            continue
+        # copy to output dir directly
+        out_file = os.path.join(output_dir, f.replace(pages_dir+'/', ''))
+        print('copying %s to %s...' % (f, out_file))
+        with open(f, "rb") as file:
+            copy_to_output(file, out_file)
     # render pages with j2
     j2_env = get_jinja2_env(config[TEMPLATE_DIR])
     for page in pages:

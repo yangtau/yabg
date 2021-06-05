@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="/slide.css">
@@ -8,13 +7,11 @@
 </head>
 
 <body>
-
-{% block content %}
-<textarea id="source">
+  {% block content %}
+  <textarea id="source">
 {{__content}}
 </textarea>
-{% endblock %}
-
+  {% endblock %}
 
   <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
   <script>
@@ -22,7 +19,6 @@
       countIncrementalSlides: false
     });
   </script>
-
   <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -36,7 +32,5 @@
       "HTML-CSS": { availableFonts: ["TeX"] }
     });
   </script>
-
 </body>
-
 </html>
