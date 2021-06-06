@@ -1,10 +1,9 @@
 {% extends "post.j2" %}
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="/github.css">
+<link href="/prism.css" rel="stylesheet"/>
 {% endblock %}
 {% block script%}
 {{ super() }}
-<script src="/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+<script src="/prism.js"></script>
 {% endblock%}

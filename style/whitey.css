@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap');
-
 html, body {
   background: #fefefe;
 }
@@ -12,10 +11,7 @@ body {
   margin: 2em auto;
   padding: 1em;
   font-size: 18px;
-}
-
-body {
-  font-family: "Georgia", "Noto Serif SC", serif;  
+  font-family: "Georgia", "Noto Serif SC", serif;
 }
 
 h1, h1, h2, h3, h4, h5, h6 {
@@ -60,12 +56,6 @@ blockquote cite {
 
 blockquote cite::before {
   content: "\2014\00a0";
-}
-
-code, pre {
-  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", 
-                 "Menlo", "Monaco", monospace;
-  font-size: .9em;
 }
 
 a {
@@ -130,8 +120,8 @@ table tbody+tbody {
   border-top: 2px solid #ddd;
 }
 
-
 /* task list */
+
 .task-list-item {
   list-style-type: none !important;
 }

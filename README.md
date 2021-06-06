@@ -27,14 +27,14 @@ python3 yabg/main.py config.yaml
 
 ## [now.sh](https://now.sh) Deployment
 
-```
+```yaml
 FRAMEWORK PRESET: other
 BUILD COMMAND: pip install PyYAML Jinja2 markdown pymdown-extensions && python3 yabg/main.py
 OUTPUT DICTORY: public # setted in your config.yaml
 ```
 
 Add `rm -rf public/` if you need to clear the old one before building the new one (if your `output_dir` in config.yaml is `public/`):
-```
+```yaml
 BUILD COMMAND: pip install PyYAML Jinja2 markdown pymdown-extensions && rm -rf public/ && python3 yabg/main.py
 ```
 
